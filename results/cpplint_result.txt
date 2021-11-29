@@ -1,0 +1,5 @@
+Done processing ./include/walker_bot/obstacle_avoidance.hpp
+Done processing ./include/walker_bot/walker.hpp
+Done processing ./src/obstacle_avoidance.cpp
+Done processing ./src/walker_bot_node.cpp
+Done processing ./src/walker.cpp
