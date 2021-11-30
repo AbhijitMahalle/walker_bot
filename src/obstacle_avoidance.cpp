@@ -42,7 +42,7 @@ ObstacleAvoidance::~ObstacleAvoidance() {
 
 bool ObstacleAvoidance::check_path(
                      const std::vector<float>& laserscan_data_range,
-                     float angle) {
+                     float angle_range) {
   bool clear = true;
   int left = 0 + angle_range;
   int right = 360 - angle_range;
