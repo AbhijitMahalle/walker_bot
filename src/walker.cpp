@@ -33,7 +33,7 @@
 
 #include <walker_bot/walker.hpp>
 
-Walker:Walker(ros::NodeHandle ros_node_h)
+Walker::Walker(ros::NodeHandle ros_node_h)
             : obstacle(std::make_shared<ObstacleAvoidance>()) {
   this->ros_node_h = ros_node_h;
   this->velocity_pub = this->ros_node_h.advertise<geometry_msgs::Twist>(
@@ -63,7 +63,7 @@ void Walker::laserscan_call_back(
                   << " Front: " << laserscan_msg->ranges[front_range]
                   << " Right: " << laserscan_msg->ranges[right_range]);
 
-  velocity_cmd = this->obstacle_avoider->velocity(
+  velocity_cmd = this->obstacle->velocity(
       laserscan_msg->ranges,
       angle);
 
