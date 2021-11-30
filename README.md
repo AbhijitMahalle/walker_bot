@@ -3,165 +3,42 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
  ---
 ## Overview
-Walker bot is a turtlebot3-based robot capable of moving in an environment while avoiding obstacles. If the bot encounters an obstacle within a pre-defined distance range it stops moving forward and turns until there is no obstacle in its path.
-
-The `walker_bot_node` in this package gets the distances of the obstacles by subscribing to the `\scan` topic that contains the laser scan data of the Turtlebot and publishes linear and angular velocity commands to `\cmd_vel` topic of the Turtlebot.
-
-__Note__: The implementation of this package does support Level 1 (with gtest) and Level 2 (with gtest + rostest) unit testing.
-- [obstacle_avoidance.cpp](src/obstacle_avoidance.cpp) - level 1 testing
-- [walkerbot_pubsub.cpp](src/walkerbot_pubsub.cpp) - level 2 testing
-
-
+Walker bot is a ROS package based on turtlebot3 capable of avoiding obstacles in an environment. It uses laserscan data to detect obstacles. 
 
 ## Dependencies
 - Ubuntu 18.04 (LTS)
 - ROS Melodic
-- Turtlebot3 ROS Package
+- Turtlebot3 ROS 
 
-## Instructions to build and run the code
- - Make sure you have ROS Melodic installed in your computer. If not, refer to [site](http://wiki.ros.org/melodic/Installation/Ubuntu).
- 
- - Create a workspace:
-    ```
-    mkdir -p ~/walkerbot_ws/src
-    cd ~/walkerbot_ws/src
-    ```
- - Clone the repository into the workspace:
-    ```
-    git clone https://github.com/anubhavparas/ros-walker-bot.git
-    ```
- - Build the workspace:
-    ```
-    cd ~/walkerbot_ws
-    catkin_make or catkin build (preferred)
-    source devel/setup.bash
-    ```
+## Steps to install
 ### Turtlebot3 installation:
- - This `ros_walker_bot` package also needs Turtlebot3 ROS package to be there. Follow the instructions to install turtlebot3:
-    ```
-    cd ~/walkerbot_ws/src
-    git clone https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
-    git clone https://github.com/ROBOTIS-GIT/turtlebot3.git
-    cd ~/walkerbot_ws/
-    catkin_make or catkin build (preferred)
-    source devel/setup.bash
-    ```
-
-  - Set the environment variable for the turtlebot's model:
-    ```
-    echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc
-    ```
-
-
-### Running with the launch file
-- Run using launch file: This will spawn:
-    - a ros_walker_bot node: `ros_walker_bot_node`
-    - gazebo world with turtlebot3
-    ```
-    roslaunch ros_walker_bot ros_walker_bot.launch 
-    
-    # arguments are:
-    # is_record_bag - default=false
-    # launch_gazebo - default=true
-    # bagfile - default=recorded_topics.bag
-    ```
-
-- To enable `rosbag` recording (by default it is disabled): 
-    - This will store the rosbag recording in a file `home/<username>/.ros/recorded_topics.bag`
-        ```
-        roslaunch ros_walker_bot ros_walker_bot.launch is_record_bag:=true
-        ```
-    - __Note__: rosbag record will not be recording any messages in any of the `*/camera*` topics.
-
-
-### Running without the launch file
-
-- To launch gazebo and turtlebot3 run the following in a new terminal. This will start `rosmaster` node too:
-    ```
-    cd ~/walkerbot_ws/
-    source devel/setup.bash
-    roslaunch turtlebot3_gazebo turtlebot3_house.launch
-    ```
-
-- To run the ros_walker_bot_node run the following in a new terminal:
-    ```
-    cd ~/walkerbot_ws/
-    source devel/setup.bash
-    rosrun ros_walker_bot ros_walker_bot_node
-    ```
-
-### Setting the logger level
-- To set the logger level of `ros_walker_bot` to `info`/`debug`:
-  ```
-  rosservice call /ros_walker_bot/set_logger_level "{logger: 'rosout', level: 'debug'}"
-  ```
-
-### Rosbag record and play
-- To run rosbag recording run the following in a new terminal (assuming the above nodes are running):
-    ```
-    cd ~/walkerbot_ws/
-    source devel/setup.bash
-    rosbag record -O record_topics.bag -a -x '(.*)/camera(.*)' --duration 30
-
-    # -O record_topics.bag: name of the output bag file
-    # -a: to record all topics
-    # -x: to exclude certain topics. here, /camera topics will not be recorded
-    # --duration 30: record for 30 sec 
-    ```
-
-- To verify the recording:
-    - Examining the bag file:
-        ```
-        rosbag info <your bagfile>
-        ```
-    - Stop/close the gazebo world and only start the ros_walker_bot_node:
-        ```
-        # in a new terminal run:
-        cd ~/walkerbot_ws/
-        source devel/setup.bash
-        roslaunch ros_walker_bot ros_walker_bot.launch launch_gazebo:=false
-        ```
-  
-    - Replay the bag file in a new terminal: 
-        ```
-        rosbag play record_topics.bag
-        ```
-    - You can verify that the `ros_walker_bot_node` is now subscribing to the recorded messages (`/scan` topic).
-
-- Run a sample recorded rosbag [file](https://drive.google.com/file/d/1sJn2XUd3lsW8PePP-BSDpE45DadM1-XN/view?usp=sharing).
-    - Download the recorded bagfile from [here](https://drive.google.com/file/d/1sJn2XUd3lsW8PePP-BSDpE45DadM1-XN/view?usp=sharing).
-    - Copy and paste the file in `~/walkerbot_ws/src/ros-walker-bot/results/bag` folder.
-    - In a new terminal start the `ros_walker_bot_node` to subscribe the `/scan` topic. This time gazebo will not be launched.
-        ```
-        cd ~/walkerbot_ws/
-        source devel/setup.bash
-        roslaunch ros_walker_bot ros_walker_bot.launch launch_gazebo:=false
-        ```
-    - In a new terminal replay the bag file. This is a 30 sec recording of many topics including `/scan` topic.
-        ```
-        cd ~/walkerbot_ws/
-        source devel/setup.bash
-        roscd ros_walker_bot/results/bag
-        ```
-    - Examining the bag file: [Sample output](results/rosbag_info.png).
-        ```
-        rosbag info record_topics.bag
-        ```
-    - Play the bag file: [Sample output](results/rosbag_replay_demo.png).
-        ```
-        rosbag play record_topics.bag
+`sudo apt-get install ros-melodic-turtlebot3` \
+`sudo apt-get install ros-melodic-turtlebot3-simulations` \
+`echo "export TURTLEBOT3_MODEL=burger" >> ~/.bashrc` 
    
-        ```
-## Run cppcheck and cpplint
-Run cppcheck: Results are stored in `./results/cppcheck_process.txt`, `./results/cppcheck_result.txt` 
-```
-cd ~/walkerbot_ws/src/ros-walker-bot
-```
-```
-sh run_cppcheck.sh
-```
+### To install the walker_bot package, enter following commands in the 'src/' directory of your catkin workspace
+`git clone https://github.com/abhi-mah/walker_bot.git` \
+`cd ..` \
+`catkin_make --pkg walker_bot` \
+`source devel/setup.bash` 
 
-Run cpplint: Results are stored in `./results/cpplint_result.txt`
-```
-sh run_cpplint.sh
-```
+### Launch walker_bot
+In your catkin workspace, enter following command to launch walker_bot_node. \
+`roslaunch walker_bot walker_bot_node.launch`
+
+### Launch walker_bot with rosbag record
+`roslaunch walker_bot walker_bot_node.launch record_bag:=true`
+
+Pre-recorded rosbag can be found [here](https://drive.google.com/file/d/109kXrhj6j0ESQNsCP5jkx7czrwJffC46/view?usp=sharing).
+
+### Inspecting generated bag files
+Use following command to inspect the generated bag file, \
+`roscd walker_bot/results/` \
+`rosbag info my_bag.bag`
+
+To play the rosbag run following command. \
+`rosbag play my_bag.bag`
+
+
+
+    
